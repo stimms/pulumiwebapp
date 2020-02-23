@@ -1,0 +1,15 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    Prime numbers are:
+    <ul>
+        @foreach (var number in Model.Primes)
+        {
+            <li>@number</li>
+        }
+    </ul>
+</div>
