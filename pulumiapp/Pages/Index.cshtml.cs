@@ -5,10 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using Xunit;
 
 namespace pulumiapp.Pages
 {
+
+    public class Prime
+    {
+        public int Number { get; set; }
+        public bool IsMersenne { get; set; }
+        public bool IsFibonacciPrime { get; set; }
+    }
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
@@ -18,7 +24,7 @@ namespace pulumiapp.Pages
             _logger = logger;
         }
 
-        public IEnumerable<int> Primes;
+        public IEnumerable<Prime> Primes;
         public void OnGet(int countTo = 500)
         {
 
@@ -32,16 +38,40 @@ namespace pulumiapp.Pages
                     j += i;
                 }
             }
-            Primes = numbers.Select((x, i) => new { index = i, value = x }).Where(x => !x.value).Select(y => y.index).Where(x => x > 2);
-            try
+            Primes = CleanPrimes(numbers).Select(x => new Prime
             {
-                Assert.True(Primes.Count() > 30);
-            }
-            catch(Exception ex)
+                Number = x,
+                IsFibonacciPrime = IsFibonacciPrime(x),
+                IsMersenne = IsMersennePrime(x)
+            });
+            if (Primes.Count() < 30)
+                throw new Exception("Too few answers!");
+
+        }
+
+        private bool IsMersennePrime(int number)
+        {
+            return ((number + 1) & number) == 0;
+        }
+
+        private bool IsFibonacciPrime(int number)
+        {
+            double fib = 0;
+            int i = 0;
+            bool isFib = false;
+            while (fib <= number)
             {
-                _logger.LogError(ex, "Too few primes returned");
-                throw;
+                fib = 1 / Math.Sqrt(5) * (Math.Pow(((1 + Math.Sqrt(5)) / 2), i) - Math.Pow(((1 - Math.Sqrt(5)) / 2), i));
+                if ((int)fib == number)
+                    isFib = true;
+                i++;
             }
+            return isFib;
+        }
+
+        private IEnumerable<int> CleanPrimes(bool[] numbers)
+        {
+            return numbers.Select((x, i) => new { index = i, value = x }).Where(x => !x.value).Select(y => y.index).Where(x => x > 2);
         }
     }
 }

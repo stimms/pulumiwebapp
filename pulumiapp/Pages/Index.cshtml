@@ -6,10 +6,31 @@
 
 <div class="text-center">
     Prime numbers are:
-    <ul>
+    <table class="table">
+        <tr>
+            <th>Number</th>
+            <th>Fibonacci</th>
+            <th>Mersenne</th>
+        </tr>
         @foreach (var number in Model.Primes)
         {
-            <li>@number</li>
+            <tr>
+                <td>
+                    @number.Number
+                </td>
+                <td>
+                    @if (number.IsFibonacciPrime)
+                    {
+                        <span>✓</span>
+                    }
+                </td>
+                <td>
+                    @if (number.IsMersenne)
+                    {
+                        <span>✓</span>
+                    }
+                </td>
+            </tr>
         }
-    </ul>
+    </table>
 </div>
